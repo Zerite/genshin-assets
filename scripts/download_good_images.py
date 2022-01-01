@@ -19,8 +19,9 @@ def rename_if_exists(file_name: str, new_name: str):
     Renames a file if it exists.
     """
 
-    if os.path.exists(file_name):
+    if os.path.exists(file_name) and not os.path.exists(new_name):
         print(f"{file_name} -> {new_name}")
+        os.makedirs(os.path.dirname(new_name), exist_ok=True)
         os.rename(file_name, new_name)
 
 
@@ -100,13 +101,25 @@ def process_weapons(dir_name: str):
     images to their appropriate names.
     """
 
+    target = "weapons-fixed"
+    if os.path.exists(target):
+        shutil.rmtree(target)
+
+    # Rename the weapon images
     for weapon_type in os.listdir(dir_name):
         weapon_type_dir = os.path.join(dir_name, weapon_type)
         for weapon in os.listdir(weapon_type_dir):
             weapon_dir = os.path.join(weapon_type_dir, weapon)
             if os.path.isdir(weapon_dir):
-                rename_if_exists(f"{weapon_dir}/Icon.png", f"{weapon_dir}/icon.png")
-                rename_if_exists(f"{weapon_dir}/AwakenIcon.png", f"{weapon_dir}/icon-ascended.png")
+                dest_dir = os.path.join(target, weapon)
+                rename_if_exists(
+                    f"{weapon_dir}/Icon.png", f"{dest_dir}/icon.png")
+                rename_if_exists(
+                    f"{weapon_dir}/AwakenIcon.png", f"{dest_dir}/icon-ascended.png")
+
+    # Remove the old directory
+    shutil.rmtree(dir_name)
+    os.rename(target, dir_name)
 
 
 if __name__ == "__main__":
