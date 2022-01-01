@@ -90,9 +90,11 @@ if __name__ == "__main__":
     target = "../images/good"
     directories = ["Artifacts", "Characters", "Weapons"]
     
-    # Delete the target directory if it exists
-    if os.path.exists(target):
-        shutil.rmtree(target)
+    # Delete the target directories if they exist
+    for directory in directories:
+        if os.path.exists(f"{target}/{directory}"):
+            print(f"Deleting {target}/{directory}")
+            shutil.rmtree(f"{target}/{directory}")
 
     # Process the directories
     for dir_name in directories:
